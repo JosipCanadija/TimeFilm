@@ -1,0 +1,22 @@
+artifact_path: file:C:/Users/Josip/Documents/GitHub/TimeFilm/mlruns/4/models/m-36b3fd75a80c471eb4b0eef758f326c6/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.1
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.6.1
+mlflow_version: 3.8.1
+model_id: m-36b3fd75a80c471eb4b0eef758f326c6
+model_size_bytes: 1190595
+model_uuid: m-36b3fd75a80c471eb4b0eef758f326c6
+prompts: null
+run_id: 575f5026dd0c4de3b46b1226017aae10
+utc_time_created: '2026-01-09 16:26:22.357910'
