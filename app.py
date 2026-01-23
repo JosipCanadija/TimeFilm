@@ -36,6 +36,7 @@ st.write("Predicting scores based on **Review Content**, **Critic Identity**, an
 
 selected_reviewer = st.selectbox("Select a Critic", reviewers)
 selected_genres = st.multiselect("Select Movie Genres", genres_list, default=["Drama"])
+movie_title = st.text_input("Movie Title")
 review_text = st.text_area("Review Text", height=150)
 
 if st.button("Predict Score"):
@@ -67,13 +68,15 @@ if st.button("Predict Score"):
         input_df['Review'] = review_text
         input_df['Reviewer'] = selected_reviewer
         input_df['genres_flat'] = " ".join(selected_genres)
+        # Movie title is collected for display; not used by the model
+        input_df['Movie'] = movie_title
 
         # 4. Predict
         # Note: Ensure columns are in the EXACT order your training set used if not using a Pipeline
         prediction = model.predict(input_df)[0]
         final_score = max(0, min(100, float(prediction)))
 
-        st.metric("Predicted Score", f"{final_score:.1f} / 100")
+        st.metric("Predicted Score", f"{final_score:.1f} / 100", help=f"Movie: {movie_title or 'N/A'}")
         if final_score >= 60:
             st.success("Verdict: FRESH 🍅")
         else:
