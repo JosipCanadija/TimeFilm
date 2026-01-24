@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from textblob import TextBlob 
 import ast
+from textblob import TextBlob
 
 st.set_page_config(page_title="Personalized Movie Critic", page_icon="🍅")
 
@@ -42,31 +42,32 @@ if st.button("Predict Score"):
         words = review_text.split()
         
         feat_dict = {
+            'Review': review_text,
+            'Reviewer': selected_reviewer,
+            'genres_flat': " ".join(selected_genres),
             'review_length': len(review_text),
             'word_count': len(words),
             'avg_word_length': sum(len(w) for w in words) / len(words) if words else 0,
+            'sentiment_polarity': blob.sentiment.polarity,
+            'sentiment_subjectivity': blob.sentiment.subjectivity,
             'exclamation_count': review_text.count('!'),
             'question_count': review_text.count('?'),
             'uppercase_ratio': sum(1 for c in review_text if c.isupper()) / len(review_text) if review_text else 0,
-            'sentiment_polarity': blob.sentiment.polarity,
-            'sentiment_subjectivity': blob.sentiment.subjectivity,
         }
         
         rev_info = reviewer_stats_df[reviewer_stats_df['Reviewer'] == selected_reviewer].iloc[0]
-        feat_dict['reviewer_mean_score'] = rev_info['reviewer_mean_score']
-        feat_dict['reviewer_std_score'] = rev_info['reviewer_std_score']
-        feat_dict['reviewer_review_count'] = rev_info['reviewer_review_count']
+        feat_dict.update({
+            'reviewer_mean_score': rev_info['reviewer_mean_score'],
+            'reviewer_std_score': rev_info['reviewer_std_score'],
+            'reviewer_review_count': rev_info['reviewer_review_count']
+        })
 
         input_df = pd.DataFrame([feat_dict])
-        input_df['Review'] = review_text
-        input_df['Reviewer'] = selected_reviewer
-        input_df['genres_flat'] = " ".join(selected_genres)
-        input_df['Movie'] = movie_title
-
+        
         prediction = model.predict(input_df)[0]
         final_score = max(0, min(100, float(prediction)))
 
-        st.metric("Predicted Score", f"{final_score:.1f} / 100", help=f"Movie: {movie_title or 'N/A'}")
+        st.metric("Predicted Score", f"{final_score:.1f} / 100")
         if final_score >= 60:
             st.success("Verdict: FRESH 🍅")
         else:
